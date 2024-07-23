@@ -3,16 +3,18 @@ from utils.http_method import HttpMethod
 
 """Методы для тестирования гугл мапс"""
 
+# константы в аппер кейсе
 base_url = "https://rahulshettyacademy.com"
 key = "?key=qaclick123"
 
-
+# когда класс не наследуется () в названии не нужны
 class GoogleMapsApi():
 
     """"Метод для создания новой локации"""
     @staticmethod
     def create_new_place():
-
+        # не надо хакодить дату, т.е.
+        # нужно выносить как минимум в параметры денные из этого словаря, чтобы это было более гибко
         json_create_new_place = {
 
             "location": {
@@ -31,8 +33,10 @@ class GoogleMapsApi():
         }
 
         post_resourse = "/maps/api/place/add/json"
+        # использование f строки предпочтительнее
         post_url = base_url + post_resourse + key
         print(post_url)
+        # HttpMethod засунуть в __init__
         result_post = HttpMethod.post(post_url, json_create_new_place)
         print(result_post.text)
         return result_post
@@ -40,7 +44,7 @@ class GoogleMapsApi():
     """"Метод для проверки новой локации"""
 
     @staticmethod
-    def get_new_place(place_id):
+    def get_new_place(place_id): # лучше указывать типы, это увеличивает читаемость кода
 
         get_resourse = "/maps/api/place/get/json"
         get_url = base_url + get_resourse + key + "&place_id=" + place_id

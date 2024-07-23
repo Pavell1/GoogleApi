@@ -4,13 +4,18 @@ import  requests
 from utils.logger import Logger
 
 """Список http методов"""
+# скобки не нужны, логичнее назвать HttpClient
 class HttpMethod():
+    # лучше это вынести в инит
     headers = {'Content-Type': 'application/json'}
     cookie = ""
 
+    # опять же один статик методы
     @staticmethod
-    def get(url):
+    def get(url): # typing
         with allure.step("GET"):
+            # logger вынести в инит, а не обращаться к классу всегда
+            # базовую часть урла лучше вынести в инит и принимать как параметр
             Logger.add_request(url, method="GET")
             result = requests.get(url, headers=HttpMethod.headers, cookies=HttpMethod.cookie)
             Logger.add_responce(result)
@@ -39,3 +44,6 @@ class HttpMethod():
             result = requests.delete(url, json=body, headers=HttpMethod.headers, cookies=HttpMethod.cookie)
             Logger.add_responce(result)
             return result
+
+    # во всех методах один и тот же код, только отличается метод, можно сделать базовый метод для отправки запроса,
+    # который будет выпонять общие действия и уже использовать его
