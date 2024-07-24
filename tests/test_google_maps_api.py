@@ -10,22 +10,16 @@ from utils.checking import Checking
 @allure.epic('Test create new location')
 class Test_create_place():  # TestCreatePlace
     @allure.description('Создание места')
-    def test_create_new_place(self):
+    def test_create_new_place(self, create_new_place, delete_place):
         print("Метод POST")
-        result_post = GoogleMapsApi.create_new_place() # GoogleMapsApi создаем в фикстуре и принимаем ее как параметр теста
-        check_post = result_post.json()
-        place_id = check_post.get("place_id")
+        result_post = create_new_place # GoogleMapsApi создаем в фикстуре и принимаем ее как параметр теста
         Checking.check_status_code(result_post, 200) # тоже самое в чекере
         Checking.check_json_token(result_post, ['status', 'place_id', 'scope', 'reference', 'id'])
         Checking.check_json_value(result_post, 'status', 'OK')
-        # следующие две строки для того чтобы получить все ключи из ответа
-        # token = json.loads(result_post.text)
-        # print(list(token))
-        return place_id # в тесте ничего не надо возвращать
 
     @allure.description('Чтение места')
-    def test_read_new_place(self):
-        place_id_post = self.test_create_new_place()
+    def test_read_new_place(self, create_new_place, delete_place):
+        place_id_post = create_new_place
         print("Метод GET")
         result_get = GoogleMapsApi.get_new_place(place_id_post)
         Checking.check_status_code(result_get, 200)
@@ -37,7 +31,7 @@ class Test_create_place():  # TestCreatePlace
 
 
     @allure.description('Обновление места')
-    def test_update_new_place(self):
+    def test_update_new_place(self, ):
         place_id = self.test_create_new_place()
         print("Метод PUT")
         result_put = GoogleMapsApi.put_new_place(place_id)
@@ -55,8 +49,8 @@ class Test_create_place():  # TestCreatePlace
         Checking.check_json_value(result_get, 'address', '29, side layout, cohen 09')
 
     @allure.description('Удаление места')
-    def test_delete_new_place(self):
-        place_id = self.test_create_new_place()
+    def test_delete_new_place(self, create_new_place):
+        place_id = create_new_place
         print("Метод DELETE")
         result_delete = GoogleMapsApi.delete_new_place(place_id)
         Checking.check_status_code(result_delete, 200)
@@ -64,7 +58,7 @@ class Test_create_place():  # TestCreatePlace
         Checking.check_json_value(result_delete, 'status', 'OK')
 
     @allure.description('Проверка удаления места')
-    def test_read_new_place_after_delete(self):
+    def test_read_new_place_after_delete(sel, create_new_place):
         place_id = self.test_create_new_place()
         print("Метод GET для проверки DELETE")
         result_get = GoogleMapsApi.get_new_place(place_id)
@@ -73,10 +67,11 @@ class Test_create_place():  # TestCreatePlace
         Checking.check_json_value(result_get, 'address', '29, side layout, cohen 09')
 
     @allure.description('Повторное удаление места')
-    def test_delete_new_place_second_once(self):
-        place_id = self.test_create_new_place()
+    def test_delete_new_place_second_once(self, create_new_place):
+        place_id = create_new_place
         print("Метод DELETE")
         result_delete = GoogleMapsApi.delete_new_place(place_id)
-        Checking.check_status_code(result_delete, 200)
         Checking.check_json_token(result_delete, ['status'])
         Checking.check_json_value(result_delete, 'status', 'OK')
+        result_delete = GoogleMapsApi.delete_new_place(place_id)
+        Checking.check_status_code(result_delete, 404)
