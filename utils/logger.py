@@ -3,6 +3,7 @@ import os
 
 
 class Logger():
+    # нужно вынести в инит, что если для разных тестов мы захотим создавать разные лог файлы?
     file_name = f"logs/log_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
 
     @classmethod
